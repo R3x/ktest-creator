@@ -107,13 +107,9 @@ class KTestRepack(object):
         self.objs.append(KTestObject(size_bytes, 4))
 
         size_field = self.get_next()
-
-        if size == 0:
-            # This is a special case, we can't do anything else
-            size = 1
-        
         element_type = self.get_next()
-        for _ in range(size - 1):
+        
+        for _ in range(size):
             self.types[element_type]()
         
         # Now sanity check that the next step is closed brackets
