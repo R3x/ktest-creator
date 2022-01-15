@@ -17,8 +17,7 @@ class KTestRepack(object):
             "int1":self.int8gen, "functionptr":self.int8gen, "int8":self.int8gen, 
             "int16":self.int16gen, "int32":self.int32gen, "size":self.int32gen, 
             "int64":self.int64gen, "double":self.int64gen, "x86float":self.x86floatgen, 
-            "array [":self.arraygen, "struct [":self.structgen, "const array [":self.constarraygen, 
-            "structptr [":self.structgen 
+            "array [":self.arraygen, "struct [":self.structgen, "structptr [":self.structgen 
         }
         
         self.objs = []
@@ -104,7 +103,7 @@ class KTestRepack(object):
     def arraygen(self):
         # Increment and sanity check the size
         size_bytes = self.get_data_from_file(4, "array size")
-        size = struct.unpack("<I", size_bytes)[0]
+        size = struct.unpack("<I", size_bytes[0])[0]
         self.objs.append(KTestObject(size_bytes, 4))
 
         size_field = self.get_next()
@@ -128,19 +127,6 @@ class KTestRepack(object):
                 break
             self.types[next_token]()
     
-    def constarraygen(self):
-        # Increment and sanity check the size
-        size_bytes = self.get_data_from_file(4)
-        size = struct.unpack("<I", size_bytes)[0]
-        self.objs.append(KTestObject(size_bytes, 4))
-        size_field = self.get_next()
-        # Now we have the array element type
-        element_type = self.get_next()
-        for _ in range(size):
-            self.types[element_type]()
-        
-        assert self.get_next() == "]", f"Array not closed"
-
 obj_ctr = 0
 
 class KTestObject(object):
